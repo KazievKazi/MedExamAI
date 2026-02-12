@@ -16,6 +16,11 @@ export default defineConfig({
       '/api': {
         target: 'http://46.149.78.16:8080',
         changeOrigin: true
+      },
+      '/quiz': {
+        target: 'http://46.149.78.16:8888',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/quiz/, '')
       }
     }
   }

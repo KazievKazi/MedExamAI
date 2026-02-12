@@ -1,12 +1,11 @@
 export interface Task {
-  id: number
-  category: string
-  text: string
+  question_id: number
+  question_text: string
 }
 
 export interface AIResponse {
   score: number
-  feedback: string
+  explanation: string
 }
 
 export type QuizState = 'answering' | 'loading' | 'result'

@@ -17,7 +17,7 @@
           </svg>
           <div class="score-value">
             <span class="score-number">{{ displayedScore }}</span>
-            <span class="score-label-small">баллов</span>
+            <span class="score-label-small">{{ scoreWord }}</span>
           </div>
         </div>
 
@@ -25,7 +25,7 @@
         <div class="result-meta">
           <h3 class="result-verdict">{{ verdict }}</h3>
           <p class="result-verdict-subtitle">
-            AI-оценка вашего ответа по задаче «{{ category }}»
+            AI-оценка вашего ответа по задаче
           </p>
         </div>
       </div>
@@ -78,6 +78,16 @@ defineEmits<{
 const { current: displayedScore, animateTo } = useCountUp()
 const { displayedText: displayedFeedback, isTyping, start: startTypewriter } = useTypewriter()
 
+const scoreWord = computed(() => {
+  const n = displayedScore.value
+  const mod10 = n % 10
+  const mod100 = n % 100
+  if (mod100 >= 11 && mod100 <= 14) return 'баллов'
+  if (mod10 === 1) return 'балл'
+  if (mod10 >= 2 && mod10 <= 4) return 'балла'
+  return 'баллов'
+})
+
 const scoreClass = computed(() => {
   const s = props.result.score
   if (s >= 85) return 'score-excellent'
@@ -100,7 +110,7 @@ const dashOffset = computed(() => {
 
 onMounted(() => {
   animateTo(props.result.score)
-  startTypewriter(props.result.feedback)
+  startTypewriter(props.result.explanation)
 })
 </script>
 

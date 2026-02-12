@@ -19,15 +19,16 @@
         :has-result="state === 'result'"
       />
 
-      <!-- Task Card -->
+      <!-- Task Card (shown only when task is loaded) -->
       <TaskCard
+        v-if="currentTask"
         :task="currentTask"
         :transition-class="taskTransition"
       />
 
       <!-- Answer Form -->
       <AnswerForm
-        v-if="state === 'answering'"
+        v-if="state === 'answering' && currentTask"
         v-model="userAnswer"
         :show-skip="currentIndex < totalTasks - 1"
         @submit="submitAnswer"
@@ -39,9 +40,9 @@
 
       <!-- Result -->
       <ResultCard
-        v-if="state === 'result' && currentResult"
+        v-if="state === 'result' && currentResult && currentTask"
         :result="currentResult"
-        :category="currentTask.category"
+        :category="''"
         :is-last="currentIndex >= totalTasks - 1"
         @next="nextTask"
       />
@@ -51,8 +52,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import type { AIResponse, QuizState } from '@/types'
-import { MOCK_TASKS, MOCK_AI_RESPONSES } from '@/data/mock'
+import type { Task, AIResponse, QuizState } from '@/types'
 import AppHeader from '@/components/AppHeader.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import TaskCard from '@/components/TaskCard.vue'
@@ -61,16 +61,18 @@ import LoadingState from '@/components/LoadingState.vue'
 import ResultCard from '@/components/ResultCard.vue'
 import CompletionScreen from '@/components/CompletionScreen.vue'
 
+const TOTAL_TASKS = 5
+
 const currentIndex = ref(0)
 const userAnswer = ref('')
-const state = ref<QuizState>('answering')
+const state = ref<QuizState>('loading')
 const taskTransition = ref('')
+const currentTask = ref<Task | null>(null)
 const currentResult = ref<AIResponse | null>(null)
 const results = ref<(AIResponse | null)[]>([])
 const allCompleted = ref(false)
 
-const currentTask = computed(() => MOCK_TASKS[currentIndex.value])
-const totalTasks = computed(() => MOCK_TASKS.length)
+const totalTasks = TOTAL_TASKS
 
 const completedIndexes = computed(() =>
   results.value
@@ -84,24 +86,30 @@ const avgScore = computed(() => {
   return Math.round(filled.reduce((sum, r) => sum + r.score, 0) / filled.length)
 })
 
+async function loadQuestion(lastId?: number, silent = false) {
+  if (!silent) state.value = 'loading'
+  const url = lastId !== undefined
+    ? `/quiz/get-question?last_id=${lastId}`
+    : '/quiz/get-question'
+  const res = await fetch(url)
+  const data: Task = await res.json()
+  currentTask.value = data
+  state.value = 'answering'
+}
+
 async function submitAnswer() {
-  if (!userAnswer.value.trim()) return
+  if (!userAnswer.value.trim() || !currentTask.value) return
   state.value = 'loading'
 
-  // TODO: Replace with real API call
-  // const response = await fetch('/api/check', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({
-  //     taskId: currentTask.value.id,
-  //     answer: userAnswer.value
-  //   })
-  // })
-  // const data: AIResponse = await response.json()
-
-  // Simulate AI processing
-  await new Promise(r => setTimeout(r, 2500 + Math.random() * 1500))
-  const data = MOCK_AI_RESPONSES[currentIndex.value]
+  const res = await fetch('/quiz/check-answer', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      question_id: currentTask.value.question_id,
+      user_text: userAnswer.value
+    })
+  })
+  const data: AIResponse = await res.json()
 
   currentResult.value = data
   results.value[currentIndex.value] = data
@@ -109,7 +117,7 @@ async function submitAnswer() {
 }
 
 async function nextTask() {
-  if (currentIndex.value >= totalTasks.value - 1) {
+  if (currentIndex.value >= totalTasks - 1) {
     allCompleted.value = true
     return
   }
@@ -117,30 +125,33 @@ async function nextTask() {
   taskTransition.value = 'task-leaving'
   await new Promise(r => setTimeout(r, 300))
 
+  const lastId = currentTask.value?.question_id
   currentIndex.value++
   userAnswer.value = ''
   currentResult.value = null
-  state.value = 'answering'
+  currentTask.value = null
   taskTransition.value = 'task-entering'
+
+  await loadQuestion(lastId, true)
 
   await new Promise(r => setTimeout(r, 500))
   taskTransition.value = ''
 }
 
-function restartQuiz() {
+async function restartQuiz() {
   currentIndex.value = 0
   userAnswer.value = ''
   currentResult.value = null
+  currentTask.value = null
   results.value = []
-  state.value = 'answering'
   allCompleted.value = false
+  await loadQuestion()
   taskTransition.value = 'task-entering'
   setTimeout(() => (taskTransition.value = ''), 500)
 }
 
 onMounted(() => {
-  taskTransition.value = 'task-entering'
-  setTimeout(() => (taskTransition.value = ''), 500)
+  loadQuestion()
 })
 </script>
 

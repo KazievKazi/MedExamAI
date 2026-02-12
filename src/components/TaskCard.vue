@@ -3,9 +3,10 @@
     <div class="task-card" :class="transitionClass">
       <div class="task-badge">
         <span class="task-badge-icon">📋</span>
-        {{ task.category }}
+        <!-- {{ task.category }} -->
+        Задача
       </div>
-      <div class="task-text">{{ task.text }}</div>
+      <div class="task-text">{{ task.question_text }}</div>
     </div>
   </div>
 </template>
