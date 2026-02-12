@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background: dark rounded square matching logo-icon style -->
+  <rect width="32" height="32" rx="7" fill="#1A1D23"/>
+
+  <!-- Left earpiece -->
+  <circle cx="9" cy="5" r="1.5" fill="#E8E6E1"/>
+  <!-- Right earpiece -->
+  <circle cx="23" cy="5" r="1.5" fill="#E8E6E1"/>
+
+  <!-- Bridge arch connecting earpieces (U-shape) -->
+  <path d="M9,6.5 C9,15 23,15 23,6.5"
+        fill="none" stroke="#E8E6E1" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Stem down + curve to chest piece -->
+  <path d="M16,14 L16,20 C16,26 22,26 22,24"
+        fill="none" stroke="#E8E6E1" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Chest piece / diaphragm (filled dark to mask tube, blue outline) -->
+  <circle cx="22" cy="24" r="3.5" fill="#1A1D23" stroke="#2563EB" stroke-width="2"/>
+  <!-- Center dot -->
+  <circle cx="22" cy="24" r="1.2" fill="#2563EB"/>
+</svg>
