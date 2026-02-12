@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { AIResponse, QuizState } from '@/types'
 import { MOCK_TASKS, MOCK_AI_RESPONSES } from '@/data/mock'
 import AppHeader from '@/components/AppHeader.vue'
