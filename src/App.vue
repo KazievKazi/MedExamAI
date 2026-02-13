@@ -83,7 +83,7 @@ const completedIndexes = computed(() =>
 const avgScore = computed(() => {
   const filled = results.value.filter((r): r is AIResponse => r !== null)
   if (!filled.length) return 0
-  return Math.round(filled.reduce((sum, r) => sum + r.score, 0) / filled.length)
+  return Math.round(filled.reduce((sum, r) => sum + r.score, 0) / filled.length * 10) / 10
 })
 
 async function loadQuestion(lastId?: number, silent = false) {

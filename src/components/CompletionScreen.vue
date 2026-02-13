@@ -9,7 +9,7 @@
         <div class="completion-stat-label">Задач решено</div>
       </div>
       <div class="completion-stat">
-        <div class="completion-stat-value">{{ avgScore }}%</div>
+        <div class="completion-stat-value">{{ avgScore }}/5</div>
         <div class="completion-stat-label">Средний балл</div>
       </div>
     </div>

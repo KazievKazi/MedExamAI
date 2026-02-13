@@ -90,22 +90,22 @@ const scoreWord = computed(() => {
 
 const scoreClass = computed(() => {
   const s = props.result.score
-  if (s >= 85) return 'score-excellent'
-  if (s >= 70) return 'score-good'
-  if (s >= 50) return 'score-average'
+  if (s >= 5) return 'score-excellent'
+  if (s >= 4) return 'score-good'
+  if (s >= 3) return 'score-average'
   return 'score-low'
 })
 
 const verdict = computed(() => {
   const s = props.result.score
-  if (s >= 85) return 'Отличный результат!'
-  if (s >= 70) return 'Хороший ответ'
-  if (s >= 50) return 'Можно лучше'
+  if (s >= 5) return 'Отличный результат!'
+  if (s >= 4) return 'Хороший ответ'
+  if (s >= 3) return 'Можно лучше'
   return 'Требует доработки'
 })
 
 const dashOffset = computed(() => {
-  return 283 - (283 * props.result.score / 100)
+  return 283 - (283 * props.result.score / 5)
 })
 
 onMounted(() => {
